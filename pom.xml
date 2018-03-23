@@ -1,0 +1,291 @@
+<!--
+  ~ Licensed to Jasig under one or more contributor license
+  ~ agreements. See the NOTICE file distributed with this work
+  ~ for additional information regarding copyright ownership.
+  ~ Jasig licenses this file to you under the Apache License,
+  ~ Version 2.0 (the "License"); you may not use this file
+  ~ except in compliance with the License.  You may obtain a
+  ~ copy of the License at the following location:
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>org.jasig.cas</groupId>
+    <artifactId>cas-server</artifactId>
+    <version>4.0.0-RC4-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>cas</artifactId>
+  <packaging>war</packaging>
+  <version>4.0.0-RC4-SNAPSHOT</version>
+  <name>Jasig CAS Web Application</name>
+  <dependencies>
+    <dependency>
+      <groupId>org.jasig.cas</groupId>
+      <artifactId>cas-server-webapp-support</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+	<dependency>
+      <groupId>redis.clients</groupId>
+      <artifactId>jedis</artifactId>
+      <version>2.4.2</version>
+	</dependency>
+	<dependency>
+      <groupId>com.gionee</groupId>
+      <artifactId>gnif-core</artifactId>
+      <version>1.0-SNAPSHOT</version>
+	</dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-expression</artifactId>
+      <version>${spring.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+	<dependency>
+	  <groupId>com.microsoft</groupId>
+	  <artifactId>sqljdbc</artifactId>
+	  <version>4</version>
+	  <scope>runtime</scope>
+	</dependency>
+	<dependency>
+	  <groupId>commons-pool</groupId>
+	  <artifactId>commons-pool</artifactId>
+	  <version>20030825.183949</version>
+	</dependency>
+	<dependency>
+	  <groupId>commons-dbcp</groupId>
+	  <artifactId>commons-dbcp</artifactId>
+	  <version>20030825.184428</version>
+      <scope>runtime</scope>
+	</dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jstl</artifactId>
+      <version>1.1.2</version>
+      <type>jar</type>
+      <scope>runtime</scope>
+    </dependency>
+	<dependency>
+      <groupId>org.jasig.cas</groupId>
+      <artifactId>cas-server-support-jdbc</artifactId>
+      <version>4.0.0-RC3</version>
+	</dependency>
+	<dependency>
+      <groupId>com.gionee</groupId>
+      <artifactId>hr-service</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+	<dependency>
+	  <groupId>com.gionee</groupId>
+	  <artifactId>gnif-mail</artifactId>
+	  <version>1.0-SNAPSHOT</version>
+	</dependency>
+	<dependency>
+      <groupId>com.octo.captcha</groupId>
+      <artifactId>jcaptcha</artifactId>
+      <version>1.0</version>
+      <scope>compile</scope>
+	  <exclusions>
+		<exclusion>
+		  <groupId>com.jhlabs</groupId>
+          <artifactId>imaging</artifactId>
+		</exclusion>
+	  </exclusions>
+	</dependency>
+	<dependency>
+	  <groupId>com.octo.captcha</groupId>
+	  <artifactId>jcaptcha-api</artifactId>
+	  <version>1.0</version>
+	</dependency>	
+	<dependency>
+      <groupId>taglibs</groupId>
+      <artifactId>standard</artifactId>
+      <version>1.1.2</version>
+      <type>jar</type>
+      <scope>runtime</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+	<finalName>cas</finalName>
+    <plugins>
+	  <plugin>
+		<groupId>org.eclipse.jetty</groupId>
+		<artifactId>jetty-maven-plugin</artifactId>
+		<version>9.2.0.RC0</version>
+		<configuration>
+		  <scanIntervalSeconds>10</scanIntervalSeconds>
+		  <contextXml>src/test/resources/jetty-contexts.xml</contextXml>
+		</configuration>
+	  </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <configuration>
+          <downloadSources>true</downloadSources>
+          <downloadJavadocs>true</downloadJavadocs>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <webResources>
+            <resource>
+              <directory>${basedir}/src/main/webapp/WEB-INF</directory>
+              <filtering>true</filtering>
+              <targetPath>WEB-INF</targetPath>
+              <includes>
+                <include>**/web.xml</include>
+              </includes>
+            </resource>
+          </webResources>
+        </configuration>
+      </plugin>
+    </plugins>
+    <resources>
+      <resource>
+        <filtering>true</filtering> <!-- 是否使用过滤器 -->
+		<directory>${basedir}/src/main/resources</directory>
+		<includes>
+		  <include>app.properties</include>
+		</includes>
+      </resource>
+      <resource>
+		<directory>${basedir}/src/main/resources</directory>
+		<excludes>
+		  <exclude>app.properties</exclude>
+		</excludes>
+      </resource>
+    </resources>
+  </build>
+
+  <properties>
+    <cs.dir>${project.parent.basedir}</cs.dir>
+  </properties>
+
+  <profiles>
+    <profile>
+      <id>development</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+	  <properties>
+		<jdbc.driverClassName>com.microsoft.sqlserver.jdbc.SQLServerDriver</jdbc.driverClassName>
+		<jdbc.url>jdbc:sqlserver://192.168.0.44:1433;DatabaseName=GnSy</jdbc.url>
+		<jdbc.username>sa</jdbc.username>
+		<jdbc.password>12345678</jdbc.password>
+
+		<base.path>http://localhost:8084/</base.path>
+
+		<redis.hosts>192.168.91.129</redis.hosts>
+		<redis.port>6379</redis.port>
+		<redis.database_num>0</redis.database_num>
+		<cas.st_time>1800000</cas.st_time>
+		<cas.tgt_time>1800000</cas.tgt_time>
+		
+		<uaamUrl>192.168.0.44</uaamUrl>
+		<uaamUser>sa</uaamUser>
+		<uaamPassword>12345678</uaamPassword>
+		<uaamDb>newuaam</uaamDb>
+		
+		<eoaUrl>http://localhost:8082/uc/</eoaUrl>
+		<excludeUrl></excludeUrl>
+		<url.success>http://localhost:8082/index.html</url.success>
+		<captcha.store>hashMapCaptchaStore</captcha.store>
+		<cache.store>hashMapCacheStore</cache.store>
+		<!-- <cache.store>redisMapCacheStore</cache.store> -->
+	  </properties>
+	</profile>
+
+    <profile>
+      <id>jz</id>
+	  <properties>
+		<jdbc.driverClassName>com.microsoft.sqlserver.jdbc.SQLServerDriver</jdbc.driverClassName>
+		<jdbc.url>jdbc:sqlserver://192.168.0.88:1433;DatabaseName=jz_gnsy</jdbc.url>
+		<jdbc.username>sa</jdbc.username>
+		<jdbc.password>sqlserver2008_88</jdbc.password>
+
+		<base.path>http://localhost:8080/</base.path>
+
+		<redis.hosts>192.168.0.96</redis.hosts>
+		<redis.port>6379</redis.port>
+		<redis.database_num>1</redis.database_num>
+		<cas.st_time>1800000</cas.st_time>
+		<cas.tgt_time>1800000</cas.tgt_time>
+		
+		<uaamUrl>localhost</uaamUrl>
+		<uaamUser>sa</uaamUser>
+		<uaamPassword>sqlserver2008_88</uaamPassword>
+		<uaamDb>jz_uaam</uaamDb>
+		
+		<eoaUrl>http://localhost:8081/uaam</eoaUrl>
+		<excludeUrl></excludeUrl>
+		<url.success>http://localhost:8081/uaam/index.html</url.success>
+		<captcha.store>hashMapCaptchaStore</captcha.store>
+		<cache.store>hashMapCacheStore</cache.store>
+		<!-- <cache.store>redisMapCacheStore</cache.store> -->
+	  </properties>
+	</profile>
+	
+    <profile>
+      <id>test</id>
+	  <properties>
+		<jdbc.driverClassName>com.microsoft.sqlserver.jdbc.SQLServerDriver</jdbc.driverClassName>
+		<jdbc.url>jdbc:sqlserver://192.168.0.44:1433;DatabaseName=GnSy</jdbc.url>
+		<jdbc.username>sa</jdbc.username>
+		<jdbc.password>12345678</jdbc.password>
+
+		<base.path>http://192.168.0.96/cas/</base.path>
+
+		<redis.hosts>localhost</redis.hosts>
+		<redis.port>6379</redis.port>
+		<redis.database_num>0</redis.database_num>
+		<cas.st_time>43200000</cas.st_time>
+		<cas.tgt_time>43200000</cas.tgt_time>
+
+		<uaamUrl>192.168.0.44</uaamUrl>
+		<uaamUser>sa</uaamUser>
+		<uaamPassword>12345678</uaamPassword>
+		<uaamDb>newuaam</uaamDb>
+
+		<eoaUrl>http://192.168.0.96/eoa/</eoaUrl>
+		<excludeUrl></excludeUrl>
+		<url.success>http://192.168.0.96/eoa</url.success>
+		<captcha.store>redisCaptchaStore</captcha.store>
+		<cache.store>redisMapCacheStore</cache.store>
+	  </properties>
+	  <build>
+		<plugins>
+		  <plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-war-plugin</artifactId>
+			<version>2.4</version>
+			<configuration>
+			  <webResources>
+				<resource>
+				  <directory>src/main/redisconfig</directory>
+				  <targetPath>WEB-INF/spring-configuration</targetPath>
+				  <includes>
+					<include>*.xml</include>
+				  </includes>
+				</resource>
+			  </webResources>
+			</configuration>
+		  </plugin>		  
+		</plugins>
+	  </build>
+	</profile>
+  </profiles>
+
+</project>

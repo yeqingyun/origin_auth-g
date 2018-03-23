@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:p="http://www.springframework.org/schema/p"
+	   xmlns:cache="http://www.springframework.org/schema/cache"
+	   xmlns:task="http://www.springframework.org/schema/task"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+						   http://www.springframework.org/schema/beans/spring-beans.xsd
+						   http://www.springframework.org/schema/tx
+						   http://www.springframework.org/schema/tx/spring-tx.xsd
+						   http://www.springframework.org/schema/cache
+						   http://www.springframework.org/schema/cache/spring-cache.xsd
+						   http://www.springframework.org/schema/task
+						   http://www.springframework.org/schema/task/spring-task.xsd
+						   http://www.springframework.org/schema/p
+						   http://www.springframework.org/schema/p/spring-p.xsd
+						   http://www.springframework.org/schema/context
+						   http://www.springframework.org/schema/context/spring-context.xsd">
+
+  <context:property-placeholder location="classpath:app.properties"/>
+
+  <bean id="mailSender" class="com.gionee.gnif.mail.biz.model.MailSender">
+  </bean>
+
+  <bean id="mailService" class="com.gionee.cas.biz.service.impl.MailServiceImpl">
+	<property name="mailSender" ref="mailSender"/>
+	<property name="cacheStore" ref="${cache.store}"/>
+  </bean>
+
+  <bean id="hashMapCacheStore" class="java.util.HashMap"/>
+
+  <bean id="redisMapCacheStore" class="com.gionee.util.RedisMap"/>
+  
+  <bean id="hrUserService" class="com.gionee.hr.impl.HrUserServiceImpl">
+	<!-- <property name="userDao" ref="hrUserDao"/> -->
+	<!-- <property name="organizationDao" ref="hrOrganizationDao"/> -->
+  </bean>
+
+  <bean id="mailDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+    <property name="driverClassName" value="${jdbc.mail.driverClassName}" />
+    <property name="url" value="${jdbc.mail.url}" />
+    <property name="username" value="${jdbc.mail.username}" />
+    <property name="password" value="${jdbc.mail.password}" />
+    <property name="testWhileIdle" value="true" />
+	<property name="validationQuery" value="select 1" />
+	<property name="minEvictableIdleTimeMillis" value="1800000" />
+	<property name="removeAbandonedTimeout" value="180" />
+	<property name="removeAbandoned" value="true" />
+  </bean>
+
+  <bean id="mailSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+	<property name="dataSource" ref="mailDataSource" />
+  </bean>
+
+  <bean id="mailDaoMapper" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+	<property name="basePackage" value="com.gionee.gnif.mail.integration.dao" />
+ 	<property name="sqlSessionFactoryBeanName" value="mailSqlSessionFactory"/>
+  </bean>
+
+  <!-- hr配置 -->
+  <bean id="hrDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+    <property name="driverClassName" value="${jdbc.driverClassName}" />
+    <property name="url" value="${jdbc.url}" />
+    <property name="username" value="${jdbc.username}" />
+    <property name="password" value="${jdbc.password}" />
+	<property name="testWhileIdle" value="true" />
+	<property name="validationQuery" value="select 1" />
+	<property name="minEvictableIdleTimeMillis" value="1800000" />
+	<property name="removeAbandonedTimeout" value="180" />
+	<property name="removeAbandoned" value="true" />
+  </bean>
+  
+  <bean id="hrSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+	<property name="dataSource" ref="hrDataSource" />
+  </bean>
+  
+  <bean id="hrMapper" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+	<property name="basePackage" value="com.gionee.hr.dao" />
+	<property name="sqlSessionFactoryBeanName" value="hrSqlSessionFactory"/>
+  </bean>
+  
+</beans>
